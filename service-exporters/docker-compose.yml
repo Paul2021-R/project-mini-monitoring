@@ -1,3 +1,5 @@
+# main server watcher for monitoring structure 
+
 services:
   #########################################################
   #  NodeExporter_Svc: 호스트 지표 (CPU, RAM, Disk)

@@ -1,0 +1,98 @@
+# monitoring structure + sub server watcher
+
+services:
+  #########################################################
+  #  Prometheus: The core data collection service
+  #########################################################
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: centre-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    networks:
+      - my-central-proxy-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '512M'
+
+  #########################################################
+  #  Grafana: The data visualization dashboard
+  #########################################################
+  grafana:
+    image: grafana/grafana:latest
+    container_name: centre-grafana
+    restart: unless-stopped
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - my-central-proxy-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: '256M'
+
+  #########################################################
+  #  NodeExporter_Mon: Host metrics for THIS server
+  #########################################################
+  node-exporter-mon:
+    image: prom/node-exporter:latest
+    container_name: node-exporter-mon
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
+    pid: host
+    networks:
+      - my-central-proxy-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: '64M'
+
+  #########################################################
+  #  cAdvisor_Mon: Container metrics for THIS server
+  #########################################################
+  cadvisor-mon:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor-mon
+    restart: unless-stopped
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    devices:
+      - /dev/kmsg
+    networks:
+      - my-central-proxy-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.15'
+          memory: '128M'
+
+#########################################################
+#  Shared Volumes and Networks
+#########################################################
+volumes:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  my-central-proxy-network:
+    external: true
+    name: npm_default # IMPORTANT: Change this to your actual external network name
