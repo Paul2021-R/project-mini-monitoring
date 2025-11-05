@@ -43,7 +43,7 @@ services:
   #########################################################
   node-exporter-mon:
     image: prom/node-exporter:latest
-    container_name: node-exporter-mon
+    container_name: centre-node-exporter
     restart: unless-stopped
     volumes:
       - /proc:/host/proc:ro
@@ -67,7 +67,7 @@ services:
   #########################################################
   cadvisor-mon:
     image: gcr.io/cadvisor/cadvisor:latest
-    container_name: cadvisor-mon
+    container_name: centre-cadvisor
     restart: unless-stopped
     volumes:
       - /:/rootfs:ro
@@ -95,4 +95,4 @@ volumes:
 networks:
   my-central-proxy-network:
     external: true
-    name: npm_default # IMPORTANT: Change this to your actual external network name
+    name: my-central-proxy-network 

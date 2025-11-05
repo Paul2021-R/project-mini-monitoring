@@ -6,7 +6,7 @@ services:
   #########################################################
   node-exporter:
     image: prom/node-exporter:latest
-    container_name: node-exporter-svc
+    container_name: a5-node-exporter
     restart: unless-stopped
     ports:
       - "9100:9100"
@@ -35,7 +35,7 @@ services:
   #########################################################
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
-    container_name: cadvisor-svc
+    container_name: a5-cadvisor
     restart: unless-stopped
     ports:
       - "8081:8080" 
