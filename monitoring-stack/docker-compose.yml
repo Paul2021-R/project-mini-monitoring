@@ -32,6 +32,14 @@ services:
       - grafana_data:/var/lib/grafana
     networks:
       - my-central-proxy-network
+    environment:
+      - GF_SERVER_ROOT_URL=https://grafana.paulryu93.ddns.net/
+      # 익명 접속 허용 (기본값 false)
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      # 익명 사용자의 조직 이름 (기본값 Main Org.)
+      - GF_AUTH_ANONYMOUS_ORG_NAME=Main Org.
+      # 익명 사용자 권한 (Viewer로 설정 추천)
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
     deploy:
       resources:
         limits:
